@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Application as ConsoleApplication;
 use Throwable;
 
 class Handler extends ExceptionHandler
