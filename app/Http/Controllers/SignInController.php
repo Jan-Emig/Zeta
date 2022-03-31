@@ -16,19 +16,20 @@ class SignInController extends Controller
     public function SignIn(Request $request)
     {
         $rules = [
-            'userId' => 'required',
+            'username' => 'required|max:30',
             'password' => 'required'
         ];
 
         $msgs = [
-            'userId.required' => '🧐 Hm, this user id seems quite empty...',
+            'username.required' => '🧐 Hm, this user id seems quite empty...',
+            'username.max' => '😮 Wow, that\'s quite a long username. You\'re sure it\'s correct?',
             'password.required' => '😵‍💫 Are you sure this password is correct?'
         ];
 
         $validator = Validator::make($request->all(), $rules, $msgs);
 
         if (!$validator->fails()) {
-            $user = User::firstWhere('uuid', $request->userId);
+            $user = User::firstWhere('username', $request->username);
             if ($user) {
                 if (Hash::check($request->password, $user->password)) {
                     if (Auth::attempt(['uuid' => $user->uuid, 'password' => $request->password])) return response('');
