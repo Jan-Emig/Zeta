@@ -13,4 +13,15 @@ class User extends Model implements AuthenticatableContract
     use HasFactory;
     public $timestamps = false;
     protected $connection = 'mysql_telcloud';
+
+    protected $fillable = [
+        'username',
+        'password',
+        'uuid'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token'
+    ];
 }

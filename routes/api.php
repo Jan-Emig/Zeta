@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignInController;
+use App\Http\Controllers\MiscController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +16,14 @@ use App\Http\Controllers\SignInController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::middleware('throttle:signin')->group(function () {
+    Route::post('/signin', [SignInController::class, 'SignIn']);
 });
 
-Route::post('/signin', [SignInController::class, 'SignIn']);
+Route::get('/ping', [MiscController::class, 'ping'])
+    ->middleware('throttle:ping');

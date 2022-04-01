@@ -4,11 +4,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Services\SignInService;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 
 class SignInController extends Controller
 {
+
+    function __construct(SignInService $sign_in_service)
+    {
+        $this->sign_in_service = $sign_in_service;
+    }
+
     /**
      * Sign user in by using the provided user id and password
      * @param Illuminate\Http\Request
@@ -29,13 +38,12 @@ class SignInController extends Controller
         $validator = Validator::make($request->all(), $rules, $msgs);
 
         if (!$validator->fails()) {
-            $user = User::firstWhere('username', $request->username);
-            if ($user) {
-                if (Hash::check($request->password, $user->password)) {
-                    if (Auth::attempt(['uuid' => $user->uuid, 'password' => $request->password])) return response('');
-                    else return response('auth-failed', 401);
-                } else return response('wrong-password', 401);
-            } else return response('no-user', 404);
+            try {
+                return $this->sign_in_service->signIn($request->username, $request->password);
+            }
+            catch (Exception) {
+                return response('', 505);
+            }
         } else return response($validator->errors(), 400);
     }
 
