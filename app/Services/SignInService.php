@@ -21,8 +21,9 @@ class SignInService
         if ($user) {
             if (Hash::check($password, $user->password)) {
                 if (Auth::attempt(['uuid' => $user->uuid, 'password' => $password])) return response('');
-                else return response('auth-failed', 401);
-            } else return response('wrong-password', 401);
+                return response('auth-failed', 401);
+            }
+            return response('wrong-password', 401);
         }
         return response('no-user', 404);
     }
