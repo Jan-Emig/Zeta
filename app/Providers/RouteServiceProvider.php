@@ -61,5 +61,13 @@ class RouteServiceProvider extends ServiceProvider
                 return response('', 429);
             });
         });
+
+        RateLimiter::for('auth-check', function (Request $request) {
+            return Limit::perMinute(100)
+            ->by($request->ip())
+            ->response(function (Request $request) {
+                return response('', 429);
+            });
+        });
     }
 }

@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Services\SignInService;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -39,10 +38,12 @@ class SignInController extends Controller
 
         if (!$validator->fails()) {
             try {
-                return $this->sign_in_service->signIn($request->username, $request->password);
+                // return dd(Auth::user());
+                return $this->sign_in_service->signIn($request, $request->username, $request->password);
             }
-            catch (Exception) {
-                return response('', 505);
+            catch (Exception $e) {
+                return dd($e);
+                return response('', 500);
             }
         } else return response($validator->errors(), 400);
     }
