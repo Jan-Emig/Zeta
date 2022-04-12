@@ -2,11 +2,19 @@
 
 namespace App\Services;
 use App\Models\User;
+use App\Models\UserSession;
+use App\Services\UserSessionService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 
 class SignInService
 {
+
+    function __construct()
+    {
+        $this->userSessionService =  new UserSessionService();
+    }
 
 
     /**
@@ -16,27 +24,23 @@ class SignInService
      * @param string $password
      * @return response(msg: string, http_code:int)
      */
-    public function signIn($request, $username, $password)
+    public function signIn($request, $username, $password, $app_uuid)
     {
         $user = User::firstWhere('username', $username);
         if ($user) {
             if (Hash::check($password, $user->password)) {
-                if (Auth::attempt(['uuid' => $user->uuid, 'password' => $password])) {
-                    $request->session()->put('user', $user);
-                    // $request->session()->regenerate();
-                    // $response_data = array(
-                    //     'username' => $user->username,
-                    //     'remember_token' => $user->remember_token
-                    // );
-                    // return response($response_data);
-                    return response('');
-                }
-                return response('auth-failed', 401);
+                $session = UserSession::firstWhere('app_uuid', $app_uuid);
+                $token = ($session)
+                    ? $token = $this->userSessionService->updateUserSession($session)
+                    :  $this->userSessionService->createUserSession($request, $app_uuid, $user);
+
+                if (!$token || strlen($token) != 64) return response('', 409);
+
+                return response('')
+                    ->withCookie(cookie()->forever('s_token', $token));
             }
             return response('wrong-password', 401);
         }
         return response('no-user', 404);
     }
 }
-
-?>

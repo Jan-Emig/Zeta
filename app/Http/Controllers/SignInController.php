@@ -25,21 +25,24 @@ class SignInController extends Controller
     {
         $rules = [
             'username' => 'required|max:30',
-            'password' => 'required'
+            'password' => 'required',
+            'app_uuid' => 'required|uuid',
         ];
 
         $msgs = [
             'username.required' => '🧐 Hm, this user id seems quite empty...',
             'username.max' => '😮 Wow, that\'s quite a long username. You\'re sure it\'s correct?',
-            'password.required' => '😵‍💫 Are you sure this password is correct?'
+            'password.required' => '😵‍💫 Are you sure this password is correct?',
+            'app_uuid.required' => 'No app uuid provided',
+            'app_uuid.uuid' => 'Invalid app uuid'
         ];
 
         $validator = Validator::make($request->all(), $rules, $msgs);
 
         if (!$validator->fails()) {
             try {
-                // return dd(Auth::user());
-                return $this->sign_in_service->signIn($request, $request->username, $request->password);
+                $response = $this->sign_in_service->signIn($request, $request->username, $request->password, $request->app_uuid);
+                return $response;
             }
             catch (Exception $e) {
                 return dd($e);

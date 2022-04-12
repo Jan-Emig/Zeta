@@ -22,10 +22,8 @@ use App\Http\Controllers\AuthController;
 // });
 
 
-Route::middleware('auth')->group(function () {
-    Route::middleware('throttle:signin')->group(function () {
-        Route::post('/signin', [SignInController::class, 'SignIn']);
-    });
+Route::middleware('throttle:signin')->group(function () {
+    Route::post('/signin', [SignInController::class, 'SignIn']);
 });
 
 
