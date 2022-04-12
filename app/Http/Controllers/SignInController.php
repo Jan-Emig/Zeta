@@ -41,11 +41,9 @@ class SignInController extends Controller
 
         if (!$validator->fails()) {
             try {
-                $response = $this->sign_in_service->signIn($request, $request->username, $request->password, $request->app_uuid);
-                return $response;
+                return $this->sign_in_service->signIn($request, $request->username, $request->password, $request->app_uuid);
             }
             catch (Exception $e) {
-                return dd($e);
                 return response('', 500);
             }
         } else return response($validator->errors(), 400);

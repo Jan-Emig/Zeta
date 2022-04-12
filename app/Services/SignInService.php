@@ -29,15 +29,15 @@ class SignInService
         $user = User::firstWhere('username', $username);
         if ($user) {
             if (Hash::check($password, $user->password)) {
-                $session = UserSession::firstWhere('app_uuid', $app_uuid);
+                $session = UserSession::where('user_id', $user->id)
+                    ->firstWhere('app_uuid', $app_uuid);
                 $token = ($session)
-                    ? $token = $this->userSessionService->updateUserSession($session)
-                    :  $this->userSessionService->createUserSession($request, $app_uuid, $user);
+                    ? $this->userSessionService->updateUserSession($session)
+                    : $this->userSessionService->createUserSession($request, $app_uuid, $user);
 
                 if (!$token || strlen($token) != 64) return response('', 409);
 
-                return response('')
-                    ->withCookie(cookie()->forever('s_token', $token));
+                return response(['s_token' => $token]);
             }
             return response('wrong-password', 401);
         }
