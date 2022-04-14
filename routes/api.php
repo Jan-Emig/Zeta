@@ -32,3 +32,6 @@ Route::get('/ping', [MiscController::class, 'ping'])
 
 Route::get('/auth-check', [AuthController::class, 'checkAuthentication'])
     ->middleware('throttle:auth-check');
+
+Route::get('/generate-username', [MiscController::class, 'generateUsername'])
+    ->middleware('throttle:username-generator');

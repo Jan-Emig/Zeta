@@ -69,5 +69,13 @@ class RouteServiceProvider extends ServiceProvider
                 return response('', 429);
             });
         });
+
+        RateLimiter::for('username-generator', function (Request $request) {
+            return Limit::perMinute(100)
+            ->by($request->ip())
+            ->response(function (Request $request) {
+                return response('', 429);
+            });
+        });
     }
 }
