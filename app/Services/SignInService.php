@@ -37,7 +37,7 @@ class SignInService
 
                 if (!$token || strlen($token) != 64) return response('', 409);
 
-                return response(['s_token' => $token, 'u_uuid' => $user->uuid]);
+                return response(['s_token' => $token, 'u_uuid' => $user->uuid, 'username' => $user->username]);
             }
             return response('wrong-password', 401);
         }

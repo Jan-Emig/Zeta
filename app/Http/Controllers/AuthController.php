@@ -21,10 +21,15 @@ class AuthController extends Controller
      */
     public function checkAuthentication(Request $request) {
         $app_uuid = $request->input('app_uuid');
-        if (Str::isUuid($app_uuid)) {
-            $user_session = UserSession::firstWhere('app_uuid');
+        $s_token = $request->input('s_token');
+        $u_uuid = $request->input('u_uuid');
+        if (Str::isUuid($app_uuid) && Str::isUuid($u_uuid)) {
+            $user_session = UserSession::join('users', 'user_id', '=', 'users.id')
+                ->where('users.uuid', $u_uuid)
+                ->where('app_uuid', $app_uuid)
+                ->firstWhere('token', $s_token);
             if ($user_session) {
-                $user_session->uuid = Str::uuid();
+                $user_session->token = Str::random(env('SESSION_TOKEN_LENGTH'), 60);
                 $user_session->save();
                 return response($user_session->uuid);
             }
