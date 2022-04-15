@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -30,7 +31,7 @@ class SignInController extends Controller
         ];
 
         $msgs = [
-            'username.required' => '🧐 Hm, this user id seems quite empty...',
+            'username.required' => '🧐 Hm, this username seems quite empty...',
             'username.max' => '😮 Wow, that\'s quite a long username. You\'re sure it\'s correct?',
             'password.required' => '😵‍💫 Are you sure this password is correct?',
             'app_uuid.required' => 'No app uuid provided',
@@ -43,7 +44,7 @@ class SignInController extends Controller
             try {
                 return $this->sign_in_service->signIn($request, $request->username, $request->password, $request->app_uuid);
             }
-            catch (Exception $e) {
+            catch (Exception) {
                 return response('', 500);
             }
         } else return response($validator->errors(), 400);

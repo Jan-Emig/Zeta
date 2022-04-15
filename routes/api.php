@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SignInController;
+use App\Http\Controllers\SignUpController;
 use App\Http\Controllers\MiscController;
 use App\Http\Controllers\AuthController;
 
@@ -35,3 +36,6 @@ Route::get('/auth-check', [AuthController::class, 'checkAuthentication'])
 
 Route::get('/generate-username', [MiscController::class, 'generateUsername'])
     ->middleware('throttle:username-generator');
+
+Route::get('/check-username', [SignUpController::class, 'checkUsername'])
+    ->middleware('throttle:check-username');
