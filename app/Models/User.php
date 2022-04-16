@@ -24,4 +24,6 @@ class User extends Model implements AuthenticatableContract
         'password',
         'remember_token'
     ];
+
+    public static function getMaxUsernameLength() { return 30; }
 }
