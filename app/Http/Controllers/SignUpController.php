@@ -21,19 +21,24 @@ class SignUpController extends Controller
     public function checkUsername(Request $request) {
         try {
             $rules = ['username' => 'required|max:30'];
-            $validator = Validator::make($request->all(), $rules);
+            $msgs = [
+                'username.required' => '🧐 Hmm...are you sure you entered an username?',
+                'username.max' => '😮 Wow, that username is too long!'
+            ];
+            $validator = Validator::make($request->all(), $rules, $msgs);
 
             if (!$validator->fails()) {
                 $is_username_taken = $this->sign_up_service->doesUsernameExists($request->input('username', ''));
                 return response('', ($is_username_taken ? 409 : 200));
             } else {
                 $errors = $validator->errors();
-                if ($errors->has('username.required')) return response('', 404);
-                elseif ($errors->has('username.max')) return response('😮 Wow, that username is too long!');
-                throw new \Exception;
+                return response($errors, 400);
+                // if ($errors->has('username.required')) return response('', 404);
+                // elseif ($errors->has('username.max')) return response('😮 Wow, that username is too long!');
+                // throw new \Exception;
             }
         }
-        catch (\Exception) {
+        catch (\Exception $e) {
             return response('', 500);
         }
     }

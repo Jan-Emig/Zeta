@@ -31,7 +31,7 @@ class MiscController extends Controller
         try {
             return $this->misc_service->generateUsername();
         }
-        catch (\Exception) {
+        catch (\Exception $e) {
             return response('', 500);
         }
     }
