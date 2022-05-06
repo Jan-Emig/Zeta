@@ -20,7 +20,7 @@ class SignUpController extends Controller
      */
     public function checkUsername(Request $request) {
         try {
-            $rules = ['username' => 'required|max:30'];
+            $rules = ['username' => 'required|max:'.User::getMaxUsernameLength()];
             $msgs = [
                 'username.required' => '🧐 Hmm...are you sure you entered an username?',
                 'username.max' => '😮 Wow, that username is too long!'
@@ -33,12 +33,37 @@ class SignUpController extends Controller
             } else {
                 $errors = $validator->errors();
                 return response($errors, 400);
-                // if ($errors->has('username.required')) return response('', 404);
-                // elseif ($errors->has('username.max')) return response('😮 Wow, that username is too long!');
-                // throw new \Exception;
             }
         }
-        catch (\Exception $e) {
+        catch (\Exception) {
+            return response('', 500);
+        }
+    }
+
+    /**
+     * Create a new user
+     * @param Illuminate\Http\Request
+     */
+    public function signUp(Request $request) {
+        try
+        {
+            $username = $request->input('username');
+            $password = $request->input('password');
+            $rules = [
+                'username' => 'required|max:'.User::getMaxUsernameLength(),
+                'password' => 'required|min:4'
+            ];
+            $validator = Validator::make($request->all(), $rules);
+
+            if (!$validator->fails() && !User::firstWhere('username', $username)) {
+                $was_successfull = $this->sign_up_service->signUp($username, $password);
+                if (!$was_successfull) throw new \Exception;
+                return response('', 200);
+            } else {
+                return response('', 400);
+            }
+        }
+        catch (\Exception) {
             return response('', 500);
         }
     }

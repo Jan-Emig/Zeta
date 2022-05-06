@@ -39,3 +39,6 @@ Route::get('/generate-username', [MiscController::class, 'generateUsername'])
 
 Route::get('/check-username', [SignUpController::class, 'checkUsername'])
     ->middleware('throttle:check-username');
+
+Route::post('/sign-up', [SignUpController::class, 'signUp'])
+    ->middleware('throttle:sign-up');
