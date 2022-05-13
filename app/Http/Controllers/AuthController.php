@@ -31,7 +31,7 @@ class AuthController extends Controller
             if ($user_session) {
                 $user_session->token = Str::random(env('SESSION_TOKEN_LENGTH'), 60);
                 $user_session->save();
-                return response($user_session->uuid);
+                return response($user_session->token);
             }
         }
         return response('', 401);

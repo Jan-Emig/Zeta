@@ -35,7 +35,7 @@ class SignInService
                     ? $this->userSessionService->updateUserSession($session)
                     : $this->userSessionService->createUserSession($request, $app_uuid, $user);
 
-                if (!$token || strlen($token) != 64) return response('', 409);
+                if (!$token || strlen($token) != env('SESSION_TOKEN_LENGTH', 60)) return response('', 409);
 
                 return response(['s_token' => $token, 'u_uuid' => $user->uuid, 'username' => $user->username]);
             }
